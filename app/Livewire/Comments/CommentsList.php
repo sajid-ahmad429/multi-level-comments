@@ -34,6 +34,7 @@ class CommentsList extends Component
         // Reload comments to ensure the latest data is displayed
         $this->loadComments();
         $this->dispatch('commentsRefreshed');
+        $this->dispatch('commentAdded');
     }
 
 

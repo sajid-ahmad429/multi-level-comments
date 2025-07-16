@@ -14,16 +14,23 @@ class CommentItem extends Component
     public $showReplies = false;
     public $showReplyForm = false;
 
-    protected $listeners = [
-        'refreshReplies' => 'loadReplies',
-        'replyAdded' => 'handleReplyAdded'
-    ];
+    // Listen for replyAdded event and reload replies
+    protected $listeners = ['replyAdded' => 'onReplyAdded'];
 
     public function mount(Comment $comment, Post $post)
     {
         $this->comment = $comment;
         $this->post = $post;
         $this->loadReplies();
+    }
+
+    // Reload replies when a reply is added to this comment
+    public function onReplyAdded($parentCommentId)
+    {
+        if ($this->comment->id === $parentCommentId) {
+            $this->loadReplies();
+            $this->showReplies = true;
+        }
     }
 
     public function toggleReplies()
@@ -39,14 +46,6 @@ class CommentItem extends Component
     public function loadReplies()
     {
         $this->replies = $this->comment->replies()->with('replies')->latest()->get();
-    }
-
-    public function handleReplyAdded($parentCommentId)
-    {
-        if ($parentCommentId == $this->comment->id) {
-            $this->loadReplies();
-            $this->showReplies = true;
-        }
     }
 
     public function render()
