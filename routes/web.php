@@ -2,6 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use Illuminate\Support\Facades\View;
+use App\Livewire\Comments\CommentItem;
+use App\Livewire\Posts\PostIndex;
+use App\Livewire\Posts\PostShow;
+use App\Livewire\Comments\CommentList;
+use App\Livewire\Comments\CommentForm;
+use App\Livewire\Comments\CommentReplyForm;
+use App\Models\Post;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,6 +21,12 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+    Route::prefix('posts')->group(function () {
+        Route::get('/', PostIndex::class)->name('posts.index');
+        // Show a single post with its comments
+        Route::get('/{post}', PostShow::class)->name('posts.show');
+    });
+
     Route::redirect('settings', 'settings/profile');
 
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
