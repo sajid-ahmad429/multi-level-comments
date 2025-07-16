@@ -14,8 +14,9 @@ class CommentItem extends Component
     public $showReplies = false;
     public $showReplyForm = false;
 
-    // Listen for replyAdded event and reload replies
-    protected $listeners = ['replyAdded' => 'onReplyAdded'];
+    protected $listeners = [
+        'replyAdded' => 'onReplyAdded'
+    ];
 
     public function mount(Comment $comment, Post $post)
     {
@@ -24,13 +25,20 @@ class CommentItem extends Component
         $this->loadReplies();
     }
 
-    // Reload replies when a reply is added to this comment
     public function onReplyAdded($parentCommentId)
     {
         if ($this->comment->id === $parentCommentId) {
             $this->loadReplies();
             $this->showReplies = true;
+            $this->showReplyForm = false;
         }
+    }
+
+    public function handleReplySubmitted()
+    {
+        $this->loadReplies();
+        $this->showReplies = true;
+        $this->showReplyForm = false;
     }
 
     public function toggleReplies()
@@ -45,7 +53,11 @@ class CommentItem extends Component
 
     public function loadReplies()
     {
-        $this->replies = $this->comment->replies()->with('replies')->latest()->get();
+        $this->replies = $this->comment->replies()
+            ->with('user')
+            ->with('replies')
+            ->latest()
+            ->get();
     }
 
     public function render()
@@ -53,8 +65,6 @@ class CommentItem extends Component
         return view('livewire.comments.comment-item', [
             'comment' => $this->comment,
             'replies' => $this->replies,
-            'showReplies' => $this->showReplies,
-            'showReplyForm' => $this->showReplyForm,
             'author' => $this->comment->user ?? null,
         ]);
     }

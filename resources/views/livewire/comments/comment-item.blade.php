@@ -1,19 +1,22 @@
 <article
     tabindex="0"
-    aria-label="Comment by {{ $comment->user->name ?? 'Anonymous' }}"
+    aria-label="Comment by {{ $author->name ?? 'Anonymous' }}"
     class="bg-white border border-gray-200 rounded-xl p-5 hover:border-indigo-300 focus-within:border-indigo-400 transition-all duration-200 ease-in-out mb-6"
-    x-data="{ openReplyForm: false }"
+    x-data="{ 
+        openReplyForm: @entangle('showReplyForm').defer, 
+        openReplies: @entangle('showReplies').defer 
+    }"
 >
     <!-- Comment header -->
     <header class="flex items-start gap-4 mb-3">
         <img
-            src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name ?? 'Anonymous') }}&background=6366f1&color=fff&size=128"
-            alt="{{ $comment->user->name ?? 'Anonymous' }}"
+            src="https://ui-avatars.com/api/?name={{ urlencode($author->name ?? 'Anonymous') }}&background=6366f1&color=fff&size=128"
+            alt="{{ $author->name ?? 'Anonymous' }}"
             class="h-10 w-10 rounded-full object-cover flex-shrink-0"
         />
         <div class="flex-grow">
             <h3 class="text-base font-semibold text-gray-900">
-                {{ $comment->user->name ?? 'Anonymous' }}
+                {{ $author->name ?? 'Anonymous' }}
             </h3>
             <time
                 class="text-xs text-gray-500"
@@ -22,13 +25,19 @@
                 {{ $comment->created_at->diffForHumans() }}
             </time>
         </div>
-        <button
-            @click="openReplyForm = !openReplyForm"
-            aria-label="Reply to comment by {{ $comment->user->name ?? 'Anonymous' }}"
-            class="text-sm text-indigo-600 hover:text-indigo-800 focus:outline-none"
-        >
-            Reply
-        </button>
+        <div class="flex gap-2">
+            <button
+                @click="openReplies = !openReplies"
+                class="text-sm text-gray-600 hover:text-indigo-600 focus:outline-none"
+                x-text="openReplies ? 'Hide Replies' : 'Show Replies'"
+            ></button>
+            <button
+                @click="openReplyForm = !openReplyForm"
+                class="text-sm text-indigo-600 hover:text-indigo-800 focus:outline-none"
+            >
+                Reply
+            </button>
+        </div>
     </header>
 
     <!-- Comment content -->
@@ -39,12 +48,7 @@
     <!-- Reply form -->
     <div
         x-show="openReplyForm"
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 translate-y-1"
-        x-transition:enter-end="opacity-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 translate-y-1"
+        x-transition
         class="mt-3"
     >
         <div class="bg-gray-50 border border-gray-200 rounded p-4">
@@ -52,23 +56,26 @@
                 :postId="$comment->post_id"
                 :parentCommentId="$comment->id"
                 :key="'reply-form-comment-'.$comment->id.'-'.now()"
+                wire:submit.prevent="handleReplySubmitted"
             />
         </div>
     </div>
 
     <!-- Replies -->
-    @if($replies && count($replies))
     <section
-        aria-label="Replies to comment by {{ $comment->user->name ?? 'Anonymous' }}"
+        x-show="openReplies"
+        x-transition
+        aria-label="Replies to comment by {{ $author->name ?? 'Anonymous' }}"
         class="mt-5 space-y-4 border-l border-gray-200 pl-5"
     >
-        @foreach($replies as $reply)
+        @forelse($replies as $reply)
             <livewire:comments.comment-item
                 :comment="$reply"
                 :post="$post"
                 :key="'comment-item-'.$reply->id"
             />
-        @endforeach
+        @empty
+            <p class="text-xs text-gray-500">No replies yet.</p>
+        @endforelse
     </section>
-    @endif
 </article>
