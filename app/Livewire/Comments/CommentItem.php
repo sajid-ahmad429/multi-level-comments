@@ -62,10 +62,65 @@ class CommentItem extends Component
 
     public function render()
     {
+        $randomNames = [
+            'Amit Sharma',
+            'Priya Patel',
+            'Rajesh Kumar',
+            'Sneha Gupta',
+            'Vikram Singh',
+            'Neha Reddy',
+            'Rahul Verma',
+            'Anjali Nair',
+            'Arjun Das',
+            'Kiran Mehta',
+            'Sunil Joshi',
+            'Pooja Sinha',
+            'Manish Bhatia',
+            'Divya Agarwal',
+            'Suresh Pillai',
+            'Ritu Chauhan',
+            'Deepak Yadav',
+            'Meera Iyer',
+            'Ravi Deshmukh',
+            'Komal Thakur',
+            'Abhishek Mishra',
+            'Shweta Rao',
+            'Gaurav Saxena',
+            'Kavita Kapoor',
+            'Harsh Vardhan',
+            'Nikita Malhotra',
+            'Aditya Tripathi',
+            'Preeti Kaur',
+            'Sanjay Shetty',
+            'Isha Dubey',
+            'Anil Menon',
+            'Tanya Bhatt',
+            'Kunal Chawla',
+            'Bhavna Joshi',
+            'Yash Jain',
+            'Pallavi Shah',
+            'Rohit Bansal',
+            'Sheetal Kulkarni',
+            'Ajay Chauhan',
+            'Simran Gill',
+            'Vikas Ahuja',
+            'Aarti Puri',
+            'Tarun Kapoor',
+            'Nidhi Sharma',
+            'Nilesh Shinde',
+            'Rekha Yadav',
+            'Sameer Sood',
+            'Madhuri Rani',
+            'Prakash Nayak',
+            'Lavanya Reddy'
+        ];
+        
         return view('livewire.comments.comment-item', [
             'comment' => $this->comment,
             'replies' => $this->replies,
-            'author' => $this->comment->user ?? null,
+            'author' => $this->comment->user 
+                ?? (object)['name' => $randomNames[array_rand($randomNames)]],
         ]);
     }
+
 }
