@@ -36,6 +36,17 @@ class CommentForm extends Component
 
     public function submit()
     {
+        if ($this->depth > $this->maxDepth) {
+            session()->flash('error', 'Maximum comment depth exceeded');
+            return;
+        }
+
+        if (!$this->postId) {
+            session()->flash('error', 'Post not found');
+            return;
+        }
+
+        // Validate the content based on rules
         $this->validate();
 
         try {
@@ -46,12 +57,20 @@ class CommentForm extends Component
                 'depth' => $this->depth,
             ]);
 
+            // Reset input fields after successful save
             $this->reset(['content', 'parentCommentId', 'depth', 'replyingTo']);
-            $this->emit('commentAdded', $comment);
+
+            // Success message flash
+            session()->flash('success', 'Your comment has been posted successfully.');
+
+            // Notify frontend or other components
+            $this->dispatch('commentAdded', $comment);
+            
         } catch (Exception $e) {
             session()->flash('error', 'Failed to add comment: ' . $e->getMessage());
         }
     }
+
 
 
     public function render()
