@@ -3,13 +3,13 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use App\Models\Comment;
-
 /**
- * Command to delete empty comments from the database.
+ * Class DeleteEmptyComments
+ *
+ * This command is responsible for deleting empty comments from the application.
  */
+
 
 class DeleteEmptyComments extends Command
 {
@@ -18,8 +18,7 @@ class DeleteEmptyComments extends Command
      *
      * @var string
      */
-    protected $signature = 'app:delete-empty-comments';
-    
+    protected $signature = 'comments:delete-empty';
 
     /**
      * The console command description.
@@ -33,26 +32,14 @@ class DeleteEmptyComments extends Command
      */
     public function handle()
     {
-        // Check if the comments table exists
-        if (!Schema::hasTable('comments')) {
-            $this->error('The comments table does not exist.');
-            return;
+        $this->info('Starting to delete empty comments...');
+        // Assuming the Comment model has a 'content' field that can be empty
+        $deletedCount = Comment::whereNull('content')->orWhere('content', '')->delete();
+
+        if ($deletedCount > 0) {
+            $this->info("Deleted {$deletedCount} empty comments.");
+        } else {
+            $this->info('No empty comments found to delete.');
         }
-
-        // Fetch all empty comments
-        $emptyComments = Comment::whereNull('content')->orWhere('content', '')->get();
-
-        // Check if there are any empty comments to delete
-        if ($emptyComments->isEmpty()) {
-            $this->info('No empty comments found.');
-            return;
-        }
-
-        // Delete empty comments
-        foreach ($emptyComments as $comment) {
-            $comment->delete();
-        }
-
-        $this->info('Empty comments deleted successfully.');
     }
 }
