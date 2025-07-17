@@ -3,8 +3,8 @@
     aria-label="Comment by {{ $author->name ?? 'Anonymous' }}"
     class="bg-white border border-gray-200 shadow-sm rounded-2xl p-6 hover:shadow-md focus-within:shadow-md transition-all duration-300 ease-in-out mb-6"
     x-data="{ 
-        openReplyForm: @entangle('showReplyForm').defer, 
-        openReplies: @entangle('showReplies').defer 
+        openReplyForm: @entangle('showReplyForm'), 
+        openReplies: @entangle('showReplies') 
     }"
 >
     <!-- Comment header -->
@@ -28,7 +28,7 @@
         <div class="flex gap-2">
             <button
                 @click="openReplies = !openReplies"
-                class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 focus:outline-none transition"
+                class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 focus:outline-none transition cursor-pointer hover:bg-indigo-50 rounded px-1"
             >
                 <svg x-show="!openReplies" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -40,7 +40,7 @@
             </button>
             <button
                 @click="openReplyForm = !openReplyForm"
-                class="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 focus:outline-none transition"
+                class="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 focus:outline-none transition cursor-pointer hover:bg-indigo-50 rounded px-1"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h4l3 10 4-18 3 8h4" />
