@@ -24,4 +24,21 @@ Artisan::command('comments:delete-empty', function () {
 
 Schedule::command('comments:delete-empty')
     ->everyMinute()
-    ->sendOutputTo(storage_path('logs/delete-empty-comments.log'));
+    ->sendOutputTo(storage_path('logs/delete-empty-comments.log'))
+    ->emailOutputOnFailure(env('ADMIN_EMAIL'), 'Empty Comments Deletion Failed')
+    ->description('Delete empty comments every minute and log the output')
+    ->when(function () {
+        // Only run if there are empty comments
+        return Comment::whereNull('content')->orWhere('content', '')->exists();
+    })
+    ->onFailure(function () {
+        // Handle failure, e.g., send an alert
+        \Log::error('Failed to delete empty comments.');
+    })
+    ->onSuccess(function () {
+        // Handle success, e.g., log success
+        \Log::info('Successfully deleted empty comments.');
+    })
+    ->runInBackground()
+    ->withoutOverlapping()
+    ->timezone('Asia/Kolkata');
