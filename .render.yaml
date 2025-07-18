@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: laravel-app
+    env: docker
+    plan: free
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        sync: false
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: your-db-host.render.com
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        value: laravel_multilevel_comments_db
+      - key: DB_USERNAME
+        value: laravel
+      - key: DB_PASSWORD
+        sync: false
