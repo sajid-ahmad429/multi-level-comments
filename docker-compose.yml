@@ -11,7 +11,7 @@ services:
     volumes:
       - .:/var/www
     ports:
-      - "9001:9001"
+      - "10000:9001"  # HOST:CONTAINER
     depends_on:
       - mysql
 
