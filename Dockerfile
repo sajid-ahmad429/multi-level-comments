@@ -18,8 +18,5 @@ COPY . /var/www
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www
 
-# Expose port (Laravel will run on this inside the container)
+# Expose port (optional, usually handled by nginx)
 EXPOSE 9001
-
-# Start Laravel development server
-CMD php artisan serve --host=0.0.0.0 --port=9001
