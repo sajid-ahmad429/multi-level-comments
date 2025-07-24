@@ -37,23 +37,23 @@ class CommentForm extends Component
     public function submit()
     {
         if ($this->depth > $this->maxDepth) {
-        session()->flash('error', 'Maximum comment depth exceeded');
-        return;
-    }
-
-    if (!$this->postId) {
-        session()->flash('error', 'Post not found');
-        return;
-    }
-
-    // Limit replies to 3 per comment
-    if ($this->parentCommentId) {
-        $parentComment = Comment::find($this->parentCommentId);
-        if ($parentComment && $parentComment->replies()->count() >= 3) {
-            session()->flash('error', 'Maximum 3 replies allowed per comment.');
+            session()->flash('error', 'Maximum comment depth exceeded');
             return;
         }
-    }
+
+        if (!$this->postId) {
+            session()->flash('error', 'Post not found');
+            return;
+        }
+
+        // Limit replies to 3 per comment
+        if ($this->parentCommentId) {
+            $parentComment = Comment::find($this->parentCommentId);
+            if ($parentComment && $parentComment->replies()->count() >= 3) {
+                session()->flash('error', 'Maximum 3 replies allowed per comment.');
+                return;
+            }
+        }
 
         // Validate the content based on rules
         $this->validate();

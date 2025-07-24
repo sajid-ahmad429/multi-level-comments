@@ -22,7 +22,7 @@
             <flux:spacer />
 
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
+                <flux:navlist.item icon="folder-git-2" href="https://github.com/sajid-ahmad429/multi-level-comments" target="_blank">
                 {{ __('Repository') }}
                 </flux:navlist.item>
 

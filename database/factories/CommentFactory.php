@@ -19,11 +19,29 @@ class CommentFactory extends Factory
      */
     public function definition(): array
     {
+        $indianComments = [
+            'Bahut accha laga padhkar!',
+            'Yeh information kaafi upyogi hai.',
+            'Kya aap aur details de sakte hain?',
+            'Mujhe yeh jagah dekhni hai!',
+            'Swadisht khana lagta hai!',
+            'Dhanyavaad, yeh post share karne ke liye.',
+            'Bohot hi rochak jankari hai.',
+            'Aapka likhne ka andaaz pasand aaya.',
+            'Yahan ki tasveer bhi khoobsurat hai.',
+            'Festivals ki baat hi kuch aur hai India mein.'
+        ];
+
+        $extra = $this->faker->optional()->sentence();
+        $name = $this->faker->firstName();
+
+        $content = $this->faker->randomElement($indianComments) . " $extra - $name";
+
         return [
-            'content' => $this->faker->sentence,
+            'content' => $content,
             'post_id' => \App\Models\Post::factory(),
-            'parent_comment_id' => null, // Root comment by default
-            'depth' => 0, // Default depth for root comments
+            'parent_comment_id' => null,
+            'depth' => 0,
         ];
     }
 
