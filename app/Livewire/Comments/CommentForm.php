@@ -83,8 +83,6 @@ class CommentForm extends Component
         }
     }
 
-
-
     public function render()
     {
         $post = Post::find($this->postId);

@@ -4,6 +4,7 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use App\Models\Comment;
+use Illuminate\Support\Facades\Log;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -33,11 +34,11 @@ Schedule::command('comments:delete-empty')
     })
     ->onFailure(function () {
         // Handle failure, e.g., send an alert
-        \Log::error('Failed to delete empty comments.');
+        Log::error('Failed to delete empty comments.');
     })
     ->onSuccess(function () {
         // Handle success, e.g., log success
-        \Log::info('Successfully deleted empty comments.');
+        Log::info('Successfully deleted empty comments.');
     })
     ->runInBackground()
     ->withoutOverlapping()
