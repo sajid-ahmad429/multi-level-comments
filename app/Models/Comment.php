@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 use LogicException;
 
 class Comment extends Model
@@ -15,8 +16,22 @@ class Comment extends Model
     protected $fillable = [
         'content',
         'post_id',
+        'user_id',
         'parent_comment_id',
         'depth',
+    ];
+
+    protected $casts = [
+        'depth' => 'integer',
+    ];
+
+    // Add indexes for better query performance
+    protected $indexColumns = [
+        'post_id',
+        'parent_comment_id',
+        'user_id',
+        'created_at',
+        'depth'
     ];
 
     public const MAX_DEPTH = 3;
@@ -29,9 +44,12 @@ class Comment extends Model
         return $this->belongsTo(Post::class);
     }
 
-    public function user()
+    /**
+     * Get the user that owns the comment.
+     */
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -43,7 +61,7 @@ class Comment extends Model
     }
 
     /**
-     * Get the replies to this comment.
+     * Get the replies to this comment with optimized loading.
      */
     public function replies(): HasMany
     {
@@ -52,7 +70,40 @@ class Comment extends Model
     }
 
     /**
-     * Calculate the depth of this comment based on parent.
+     * Get all descendants of this comment (replies and their replies).
+     */
+    public function descendants(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'parent_comment_id')
+            ->with('descendants');
+    }
+
+    /**
+     * Scope for root comments (no parent).
+     */
+    public function scopeRoot(Builder $query): Builder
+    {
+        return $query->whereNull('parent_comment_id');
+    }
+
+    /**
+     * Scope for comments by depth level.
+     */
+    public function scopeByDepth(Builder $query, int $depth): Builder
+    {
+        return $query->where('depth', $depth);
+    }
+
+    /**
+     * Scope for recent comments.
+     */
+    public function scopeRecent(Builder $query): Builder
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Calculate the depth of this comment based on parent with caching.
      * Returns integer (1-based depth).
      */
     public function calculateDepth(): int
@@ -61,11 +112,16 @@ class Comment extends Model
             return 1; // Root comments are depth 1
         }
 
-        $parent = $this->relationLoaded('parent')
-            ? $this->parent
-            : $this->parent()->first();
+        // Use cached parent if available
+        if ($this->relationLoaded('parent') && $this->parent) {
+            return $this->parent->depth + 1;
+        }
 
-        return $parent ? $parent->depth + 1 : 1;
+        // Otherwise, query for parent depth
+        $parentDepth = static::where('id', $this->parent_comment_id)
+            ->value('depth');
+
+        return $parentDepth ? $parentDepth + 1 : 1;
     }
 
     /**
@@ -98,5 +154,26 @@ class Comment extends Model
     public function canHaveReplies(): bool
     {
         return $this->depth < self::MAX_DEPTH;
+    }
+
+    /**
+     * Get the total reply count for this comment.
+     */
+    public function getReplyCountAttribute(): int
+    {
+        return $this->replies()->count();
+    }
+
+    /**
+     * Get the path to the comment (useful for threading).
+     */
+    public function getThreadPathAttribute(): string
+    {
+        if (!$this->parent_comment_id) {
+            return (string) $this->id;
+        }
+
+        $parent = $this->parent;
+        return $parent->thread_path . '.' . $this->id;
     }
 }
