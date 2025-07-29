@@ -2,8 +2,14 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "dev": "vite",
         "build": "vite build",
-        "dev": "vite"
+        "build:production": "NODE_ENV=production vite build",
+        "build:analyze": "vite build --mode analyze",
+        "preview": "vite preview",
+        "clean": "rm -rf public/build",
+        "clean:cache": "rm -rf node_modules/.vite",
+        "optimize": "npm run clean && npm run clean:cache && npm run build:production"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.0.7",
@@ -14,9 +20,17 @@
         "tailwindcss": "^4.0.7",
         "vite": "^6.0"
     },
+    "devDependencies": {
+        "vite-bundle-analyzer": "^0.11.0",
+        "terser": "^5.36.0"
+    },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "4.9.5",
         "@tailwindcss/oxide-linux-x64-gnu": "^4.0.1",
         "lightningcss-linux-x64-gnu": "^1.29.1"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
     }
 }

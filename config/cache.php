@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('CACHE_STORE', 'database'),
+    'default' => env('CACHE_STORE', 'redis'),
 
     /*
     |--------------------------------------------------------------------------
@@ -74,7 +74,31 @@ return [
         'redis' => [
             'driver' => 'redis',
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
-            'lock_connection' => env('REDIS_CACHE_LOCK_CONNECTION', 'default'),
+            'lock_connection' => env('REDIS_CACHE_LOCK_CONNECTION', 'cache'),
+        ],
+
+        // High-performance cache for frequently accessed data
+        'redis_fast' => [
+            'driver' => 'redis',
+            'connection' => 'cache',
+            'lock_connection' => 'cache',
+            'prefix' => env('CACHE_PREFIX', 'laravel_cache') . ':fast',
+        ],
+
+        // Long-term cache for less frequently changing data
+        'redis_long' => [
+            'driver' => 'redis',
+            'connection' => 'cache',
+            'lock_connection' => 'cache',
+            'prefix' => env('CACHE_PREFIX', 'laravel_cache') . ':long',
+        ],
+
+        // Session-specific cache
+        'redis_session' => [
+            'driver' => 'redis',
+            'connection' => 'session',
+            'lock_connection' => 'session',
+            'prefix' => env('CACHE_PREFIX', 'laravel_cache') . ':session',
         ],
 
         'dynamodb' => [
