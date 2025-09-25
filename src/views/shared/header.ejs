@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %> • App</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2/css/pico.min.css" />
+    <style>
+      body { max-width: 720px; margin: 2rem auto; }
+      .error { color: #c00; font-size: 0.9rem; }
+      header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+      nav a { margin-right: .75rem; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <% if (!currentUser) { %>
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        <% } else { %>
+          <a href="/dashboard">Dashboard</a>
+        <% } %>
+      </nav>
+      <% if (currentUser) { %>
+      <form action="/logout" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button type="submit" aria-label="Logout">Logout</button>
+      </form>
+      <% } %>
+    </header>
+    <main>
+
