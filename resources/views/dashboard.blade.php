@@ -3,6 +3,8 @@
         $postsCount = \App\Models\Post::count();
         $commentsCount = \App\Models\Comment::count();
         $latestPosts = \App\Models\Post::query()->withCount('comments')->latest()->take(3)->get();
+        $recentComments = \App\Models\Comment::query()->with('post')->latest()->take(3)->get();
+        $averageCommentsPerPost = $postsCount > 0 ? round($commentsCount / $postsCount, 2) : 0;
     @endphp
 
     <div class="flex h-full w-full flex-1 flex-col gap-8 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -151,6 +153,47 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+            <div class="rounded-3xl bg-white border border-slate-200/80 p-7 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900">Engagement Pulse</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Quick visibility into content interaction</p>
+
+                <div class="mt-5 space-y-4">
+                    <div class="rounded-2xl bg-slate-50 p-4">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-slate-600">Average comments per post</span>
+                            <span class="font-bold text-slate-900">{{ $averageCommentsPerPost }}</span>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-slate-50 p-4">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-slate-600">Latest post activity</span>
+                            <span class="font-bold text-slate-900">{{ $latestPosts->isNotEmpty() ? $latestPosts->first()->title : 'No posts' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-3xl bg-white border border-slate-200/80 p-7 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900">Recent Activity</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Latest comments posted on your content</p>
+
+                <div class="mt-5 space-y-3">
+                    @forelse ($recentComments as $comment)
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50/50 p-4">
+                            <div class="text-sm font-semibold text-slate-900">{{ $comment->post->title ?? 'Post removed' }}</div>
+                            <div class="mt-1 text-xs text-slate-500">{{ \Illuminate\Support\Str::limit(strip_tags($comment->content), 85) }}</div>
+                        </div>
+                    @empty
+                        <div class="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-400">
+                            No recent comments yet.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
         </div>
     </div>
 </x-layouts.app>
