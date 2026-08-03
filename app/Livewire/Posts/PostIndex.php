@@ -21,6 +21,10 @@ class PostIndex extends Component
     public $sortDirection = 'desc';
     public $searchTerm = '';
 
+    public $title = '';
+    public $content = '';
+    public $editingPostId = null;
+
     /**
      * Reset pagination when searchTerm is updated.
      */
@@ -44,6 +48,65 @@ class PostIndex extends Component
         }
 
         $this->resetPage();
+    }
+
+    public function createPost()
+    {
+        $validated = $this->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string|min:3',
+        ]);
+
+        Post::create($validated);
+
+        session()->flash('success', 'Post created successfully.');
+        $this->resetForm();
+        $this->resetPage();
+    }
+
+    public function editPost(int $postId)
+    {
+        $post = Post::findOrFail($postId);
+
+        $this->editingPostId = $post->id;
+        $this->title = $post->title;
+        $this->content = $post->content;
+    }
+
+    public function updatePost()
+    {
+        $validated = $this->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string|min:3',
+        ]);
+
+        $post = Post::findOrFail($this->editingPostId);
+        $post->update($validated);
+
+        session()->flash('success', 'Post updated successfully.');
+        $this->resetForm();
+        $this->resetPage();
+    }
+
+    public function deletePost(int $postId)
+    {
+        $post = Post::findOrFail($postId);
+        $post->delete();
+
+        session()->flash('success', 'Post deleted successfully.');
+        $this->resetPage();
+    }
+
+    public function cancelEdit()
+    {
+        $this->resetForm();
+    }
+
+    public function resetForm()
+    {
+        $this->title = '';
+        $this->content = '';
+        $this->editingPostId = null;
     }
 
     /**
