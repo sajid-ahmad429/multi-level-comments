@@ -144,36 +144,41 @@ use Illuminate\Support\Str;
 <script>
     function confirmDelete(postId) {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Delete this post?',
+            html: 'This action cannot be undone. The post and its related comments will be removed.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#4f46e5', // Indigo color matching your theme
-            cancelButtonColor: '#ef4444',  // Red color
-            confirmButtonText: 'Yes, delete it!',
+            confirmButtonColor: '#4f46e5',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Yes, delete it',
             cancelButtonText: 'Cancel',
             reverseButtons: true,
+            showLoaderOnConfirm: true,
+            allowOutsideClick: () => !Swal.isLoading(),
             customClass: {
                 popup: 'rounded-3xl shadow-xl border border-slate-100',
                 confirmButton: 'rounded-xl px-5 py-2.5 text-sm font-semibold',
                 cancelButton: 'rounded-xl px-5 py-2.5 text-sm font-semibold'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Livewire component method call
+            },
+            preConfirm: () => {
                 @this.call('deletePost', postId);
+                return true;
             }
         });
     }
 
-    // Optional: Success notification after deletion
     window.addEventListener('post-deleted', event => {
         Swal.fire({
-            title: 'Deleted!',
-            text: 'Your post has been deleted successfully.',
+            toast: true,
+            position: 'top-end',
+            title: 'Post deleted successfully',
             icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
+            timer: 2200,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            customClass: {
+                popup: 'rounded-2xl shadow-lg'
+            }
         });
     });
 </script>

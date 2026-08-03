@@ -5,6 +5,7 @@ namespace App\Livewire\Comments;
 use Livewire\Component;
 use App\Models\Comment;
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class CommentForm extends Component
@@ -36,6 +37,11 @@ class CommentForm extends Component
 
     public function submit()
     {
+        if (!Auth::check()) {
+            session()->flash('error', 'Please log in to comment.');
+            return;
+        }
+
         if ($this->depth > $this->maxDepth) {
             session()->flash('error', 'Maximum comment depth exceeded');
             return;
@@ -64,7 +70,7 @@ class CommentForm extends Component
                 'post_id' => $this->postId,
                 'parent_comment_id' => $this->parentCommentId,
                 'depth' => $this->depth,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
             ]);
 
             // Reset input fields after successful save
