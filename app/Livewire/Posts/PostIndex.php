@@ -88,14 +88,26 @@ class PostIndex extends Component
         $this->resetPage();
     }
 
-    public function deletePost(int $postId)
-    {
-        $post = Post::findOrFail($postId);
-        $post->delete();
+    // public function deletePost(int $postId)
+    // {
+    //     $post = Post::findOrFail($postId);
+    //     $post->delete();
 
-        session()->flash('success', 'Post deleted successfully.');
-        $this->resetPage();
-    }
+    //     session()->flash('success', 'Post deleted successfully.');
+    //     $this->resetPage();
+    // }
+
+    public function deletePost(int $postId)
+{
+    $post = Post::findOrFail($postId);
+    $post->delete();
+
+    // SweetAlert2 success popup trigger karne ke liye dispatch add karein
+    $this->dispatch('post-deleted');
+
+    session()->flash('success', 'Post deleted successfully.');
+    $this->resetPage();
+}
 
     public function cancelEdit()
     {

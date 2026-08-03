@@ -124,7 +124,7 @@ use Illuminate\Support\Str;
                     <div class="flex items-center gap-2 text-indigo-600">
                         <a href="{{ route('posts.show', $post) }}" class="font-medium hover:text-indigo-800">Read More &rarr;</a>
                         <button type="button" wire:click="editPost({{ $post->id }})" class="font-medium hover:text-indigo-800">Edit</button>
-                        <button type="button" wire:click="deletePost({{ $post->id }})" wire:confirm="Are you sure you want to delete this post?" class="font-medium hover:text-red-600">Delete</button>
+                        <button type="button" onclick="confirmDelete({{ $post->id }})" class="font-medium hover:text-red-600">Delete</button>
                     </div>
                 </div>
             </div>
@@ -138,3 +138,42 @@ use Illuminate\Support\Str;
         {{ $posts->links() }}
     </div>
 </div>
+
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(postId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4f46e5', // Indigo color matching your theme
+            cancelButtonColor: '#ef4444',  // Red color
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            customClass: {
+                popup: 'rounded-3xl shadow-xl border border-slate-100',
+                confirmButton: 'rounded-xl px-5 py-2.5 text-sm font-semibold',
+                cancelButton: 'rounded-xl px-5 py-2.5 text-sm font-semibold'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Livewire component method call
+                @this.call('deletePost', postId);
+            }
+        });
+    }
+
+    // Optional: Success notification after deletion
+    window.addEventListener('post-deleted', event => {
+        Swal.fire({
+            title: 'Deleted!',
+            text: 'Your post has been deleted successfully.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    });
+</script>
