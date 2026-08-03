@@ -64,6 +64,7 @@ class CommentForm extends Component
                 'post_id' => $this->postId,
                 'parent_comment_id' => $this->parentCommentId,
                 'depth' => $this->depth,
+                'user_id' => auth()->id(),
             ]);
 
             // Reset input fields after successful save

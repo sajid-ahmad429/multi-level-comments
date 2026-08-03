@@ -17,6 +17,7 @@ class Comment extends Model
         'post_id',
         'parent_comment_id',
         'depth',
+        'user_id',
     ];
 
     public const MAX_DEPTH = 3;

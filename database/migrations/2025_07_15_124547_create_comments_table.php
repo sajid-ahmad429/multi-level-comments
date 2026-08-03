@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->text('content')->nullable();  // allow nullable for empty content check
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->foreignId('parent_comment_id')->nullable()->constrained('comments')->onDelete('cascade');
