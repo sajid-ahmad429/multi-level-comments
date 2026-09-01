@@ -1,3 +1,50 @@
+## Node.js Auth (Register/Login)
+
+### Quick start
+
+1. Install
+
+```bash
+npm install
+```
+
+2. Run dev server
+
+```bash
+npm run dev
+```
+
+3. Visit
+
+- http://localhost:3000/register
+- http://localhost:3000/login
+
+### Security
+
+- Argon2id hashing
+- CSRF protection via `csurf`
+- Secure session cookies with `express-session` + SQLite store
+- Helmet, XSS and frame protections
+- Rate limiting on auth endpoints and globally
+
+### Scripts
+
+- `npm run dev` – start with nodemon
+- `npm start` – start once
+- `npm run audit` – npm audit
+
+### Structure
+
+- `src/server.js` – app bootstrap and middleware
+- `src/utils/db.js` – SQLite DB init
+- `src/routes/auth.js` – register, login, logout
+- `src/routes/dashboard.js` – protected page
+- `src/views/*.ejs` – pages
+
+### Notes
+
+- Set `SESSION_SECRET` in production.
+- Set `COOKIE_SECURE=true` and `TRUST_PROXY=true` when behind HTTPS/proxy.
 # Multi-Level Commenting System with Recursive Depth Check
 
 This is a multi-level commenting system built with Laravel 12 and Livewire 3, supporting nested replies up to a specified maximum depth.
